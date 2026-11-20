@@ -14,7 +14,13 @@
     "test:run": "vitest run",
     "test:api": "vitest run --project api",
     "test:web": "vitest run --project web",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "lint": "pnpm --parallel --filter \"./apps/*\" run lint",
+    "lint:web": "pnpm --filter @pingdock/web lint",
+    "lint:api": "pnpm --filter @pingdock/api lint",
+    "typecheck": "pnpm --parallel --filter \"./apps/*\" run typecheck",
+    "typecheck:web": "pnpm --filter @pingdock/web typecheck",
+    "typecheck:api": "pnpm --filter @pingdock/api typecheck"
   },
   "license": "ISC",
   "packageManager": "pnpm@10.23.0",
