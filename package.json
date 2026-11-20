@@ -1,0 +1,16 @@
+{
+  "name": "pingdock",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PingDock API Endpoint Tester",
+  "scripts": {
+    "dev": "pnpm --parallel --filter \"./apps/*\" run dev",
+    "dev:web": "pnpm --filter @pingdock/web dev",
+    "dev:api": "pnpm --filter @pingdock/api dev",
+    "build": "pnpm --filter \"./apps/*\" run build",
+    "build:web": "pnpm --filter @pingdock/web build",
+    "build:api": "pnpm --filter @pingdock/api build"
+  },
+  "license": "ISC",
+  "packageManager": "pnpm@10.23.0"
+}
