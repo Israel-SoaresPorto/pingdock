@@ -9,8 +9,17 @@
     "dev:api": "pnpm --filter @pingdock/api dev",
     "build": "pnpm --filter \"./apps/*\" run build",
     "build:web": "pnpm --filter @pingdock/web build",
-    "build:api": "pnpm --filter @pingdock/api build"
+    "build:api": "pnpm --filter @pingdock/api build",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:api": "vitest run --project api",
+    "test:web": "vitest run --project web",
+    "test:coverage": "vitest run --coverage"
   },
   "license": "ISC",
-  "packageManager": "pnpm@10.23.0"
+  "packageManager": "pnpm@10.23.0",
+  "devDependencies": {
+    "@vitest/coverage-v8": "^5.1.1",
+    "vitest": "^5.1.1"
+  }
 }
