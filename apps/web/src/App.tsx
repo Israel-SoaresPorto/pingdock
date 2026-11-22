@@ -1,24 +1,27 @@
-import { useState } from 'react'
-import { RequestBar } from '@/components/request/request-bar'
-import { RequestTabs } from '@/components/request/request-tabs'
-import type { HeaderItem, HttpMethod } from '@/types/app'
+import { useState } from "react";
+import { RequestBar } from "@/components/request/request-bar";
+import { RequestTabs } from "@/components/request/request-tabs";
+import type { HeaderItem, HttpMethod } from "@/types/app";
+import { ResponsePanel } from "./components/response/response-panel";
+import useClientRequest from "./hooks/use-client-request";
 
 export function App() {
-  const [method, setMethod] = useState<HttpMethod>('GET')
-  const [url, setUrl] = useState('')
+  const [method, setMethod] = useState<HttpMethod>("GET");
+  const [url, setUrl] = useState("");
   const [headers, setHeaders] = useState<HeaderItem[]>([
     {
       id: crypto.randomUUID(),
-      key: 'Accept',
-      value: 'application/json',
+      key: "Accept",
+      value: "application/json",
       enabled: true,
     },
-  ])
-  const [body, setBody] = useState('')
-  const [isLoading] = useState(false)
+  ]);
+  const [body, setBody] = useState("");
 
-  function handleSubmit() {
-    // Integração com POST /api/proxy será conectada na Fase 3
+  const { request, isLoading, error, response } = useClientRequest();
+
+  async function handleSubmit() {
+    await request(url, method, headers, body);
   }
 
   return (
@@ -67,16 +70,15 @@ export function App() {
             onBodyChange={setBody}
           />
 
-          <section
-            aria-label="Painel de resposta"
-            className="rounded-[8px] border border-dashed border-border p-4 text-[13px] text-muted-foreground"
-          >
-            O painel de resposta será integrado na Fase 3.
-          </section>
+          <ResponsePanel
+            response={response}
+            error={error}
+            isLoading={isLoading}
+          />
         </main>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
