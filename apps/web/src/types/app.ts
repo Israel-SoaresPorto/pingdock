@@ -15,6 +15,11 @@ export interface HeaderItem {
   enabled: boolean;
 }
 
+export interface ProxyRequestError {
+  status?: number;
+  message: string;
+}
+
 export interface HistoryItem {
   id: string;
   url: string;
