@@ -81,7 +81,7 @@ export function useHistory() {
     });
 
     return newItem;
-  }, []);
+  }, [setValue]);
 
   const removeEntry = useCallback((id: string) => {
     setHistory((prev) => {
@@ -93,7 +93,7 @@ export function useHistory() {
   const clearHistory = useCallback(() => {
     setHistory([]);
     setValue([]);
-  }, []);
+  }, [setValue]);
 
   return {
     history,

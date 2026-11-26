@@ -13,7 +13,7 @@ export default function useLocalStorge<T>(
       const item = window.localStorage.getItem(key);
 
       return item ? (JSON.parse(item) as T) : initialValue;
-    } catch (error) {
+    } catch {
       return initialValue;
     }
   });
@@ -26,7 +26,7 @@ export default function useLocalStorge<T>(
       if (typeof window !== "undefined") {
         window.localStorage.setItem(key, JSON.stringify(valueToStore));
       }
-    } catch (error) {
+    } catch {
       // Ignora falhas de quota ou acesso bloqueado ao localStorage
     }
   };
