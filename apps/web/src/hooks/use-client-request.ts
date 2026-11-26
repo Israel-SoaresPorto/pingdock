@@ -73,7 +73,10 @@ export default function useClientRequest() {
         });
         return;
       }
-      setResponse(data as ProxyResponse);
+
+      const proxyResponse = data as ProxyResponse;
+      setResponse(proxyResponse);
+      return proxyResponse;
     } catch {
       setResponse(null);
       setError({

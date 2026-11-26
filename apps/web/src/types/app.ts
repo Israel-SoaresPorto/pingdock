@@ -26,6 +26,9 @@ export interface HistoryItem {
   method: HttpMethod;
   headers: HeaderItem[];
   body: string;
+  status: number;
   durationMs: number;
   timestamp: number;
 }
+
+export const MAX_HISTORY_ITEMS = 50;
