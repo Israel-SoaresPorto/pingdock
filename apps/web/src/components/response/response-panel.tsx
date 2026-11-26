@@ -13,6 +13,27 @@ interface ResponsePanelProps {
   className?: string;
 }
 
+export function ResponsePanelEmpty({
+  className,
+  children,
+}: {
+  className?: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col h-full items-center justify-center gap-2 p-4 text-sm text-muted-foreground",
+        className,
+      )}
+    >
+      <Terminal className="size-12 stroke-1" />
+      {children ||
+        "Nenhuma resposta ainda. Envie uma requisição para ver a resposta aqui."}
+    </div>
+  );
+}
+
 function getErrorAlertConfig(error: ProxyRequestError) {
   const isWarning = error.status === 429 || error.status === 504;
 
@@ -37,14 +58,40 @@ function getErrorAlertConfig(error: ProxyRequestError) {
   };
 }
 
+export function ResponsePanelError({
+  error,
+  className,
+}: {
+  error: ProxyRequestError;
+  className?: string;
+}) {
+  const alertConfig = getErrorAlertConfig(error);
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col items-center gap-2 rounded-md border p-4 text-sm",
+        alertConfig.containerClass,
+        className,
+      )}
+    >
+      <AlertTriangle className="size-8 stroke-1 text-destructive" />
+      <div className="flex flex-col gap-1 text-center">
+        <span className={alertConfig.titleClass}>{alertConfig.title}</span>
+        <span className="text-muted-foreground">
+          {error.message || "Ocorreu um erro ao executar a requisição."}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export function ResponsePanel({
   response,
   error,
   isLoading,
   className,
 }: ResponsePanelProps) {
-  const alertConfig = error ? getErrorAlertConfig(error) : null;
-
   if (isLoading) {
     return (
       <div
@@ -54,7 +101,7 @@ export function ResponsePanel({
         )}
       >
         <LoaderCircle className="size-4 animate-spin" />
-        Carregando resposta...
+        Enviando requisição…
       </div>
     );
   }
@@ -66,13 +113,13 @@ export function ResponsePanel({
         variant="line"
       >
         <TabsTrigger
-          value="headers"
+          value="body"
           className="py-2 px-4 grow-0 data-active:after:bg-primary"
         >
           Resposta
         </TabsTrigger>
         <TabsTrigger
-          value="body"
+          value="headers"
           className="py-2 px-4 grow-0 data-active:after:bg-primary"
         >
           Headers
@@ -82,34 +129,22 @@ export function ResponsePanel({
         {response ? (
           <ResponseContent response={response} />
         ) : (
-          <div className="flex items-center justify-center gap-2 rounded-md border border-border p-4 text-sm text-muted-foreground">
-            <Terminal className="size-4" />
-            Nenhuma resposta ainda. Envie uma requisição para ver os headers
-            aqui.
-          </div>
+          <ResponsePanelEmpty>
+            Nenhuma resposta ainda. Envie uma requisição para ver o conteúdo da
+            resposta aqui.
+          </ResponsePanelEmpty>
         )}
       </TabsContent>
       <TabsContent value="headers" className="mt-4 space-y-2 px-2">
         {error ? (
-          <div
-            className={cn(
-              "flex items-center gap-2 rounded-md border p-4 text-sm",
-              alertConfig?.containerClass,
-            )}
-          >
-            <AlertTriangle className="size-4" />
-            <span className={alertConfig?.titleClass}>
-              {alertConfig?.title}
-            </span>
-          </div>
+          <ResponsePanelError error={error} />
         ) : response ? (
           <ResponseContent response={response} />
         ) : (
-          <div className="flex items-center justify-center gap-2 rounded-md border border-border p-4 text-sm text-muted-foreground">
-            <Terminal className="size-4" />
-            Nenhuma resposta ainda. Envie uma requisição para ver a resposta
+          <ResponsePanelEmpty>
+            Nenhuma resposta ainda. Envie uma requisição para ver os headers
             aqui.
-          </div>
+          </ResponsePanelEmpty>
         )}
       </TabsContent>
     </Tabs>

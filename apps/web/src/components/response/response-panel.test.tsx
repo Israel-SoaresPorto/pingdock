@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { ProxyResponse } from "@/types/api";
-import { ResponsePanel } from "./response-panel";
+import { ResponsePanel, ResponsePanelEmpty } from "./response-panel";
 
 function createResponse(overrides: Partial<ProxyResponse> = {}): ProxyResponse {
   return {
@@ -17,16 +17,34 @@ function createResponse(overrides: Partial<ProxyResponse> = {}): ProxyResponse {
   };
 }
 
+describe("ResponsePanelEmpty", () => {
+  it("renderiza estado vazio com mensagem padrão", () => {
+    const { getByText } = render(<ResponsePanelEmpty />);
+
+    expect(
+      getByText(/Envie uma requisição para ver a resposta aqui/i),
+    ).toBeInTheDocument();
+  });
+
+  it("renderiza estado vazio com conteúdo personalizado", () => {
+    const customMessage = "Mensagem personalizada";
+    const { getByText } = render(
+      <ResponsePanelEmpty>
+        {customMessage}
+      </ResponsePanelEmpty>,
+    );
+
+    expect(getByText(customMessage)).toBeInTheDocument();
+  });
+});
+
 describe("ResponsePanel", () => {
   it("renderiza estado vazio inicial quando não há resposta nem erro", () => {
     const { getByText } = render(
       <ResponsePanel response={null} error={null} isLoading={false} />,
     );
 
-    expect(getByText("Nenhuma resposta ainda")).toBeInTheDocument();
-    expect(
-      getByText(/Informe uma URL acima e clique em Enviar/i),
-    ).toBeInTheDocument();
+    expect(getByText(/Nenhuma resposta ainda/)).toBeInTheDocument();
   });
 
   it("renderiza estado de carregamento quando isLoading é true", () => {
