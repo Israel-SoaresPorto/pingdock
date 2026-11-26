@@ -140,10 +140,7 @@ export function App() {
 
             <ResponsePanel
               response={response}
-              error={{
-                message: error?.message ?? "Erro desconhecido",
-                status: error?.status ?? 500,
-              }}
+              error={error}
               isLoading={isLoading}
               className="w-full"
             />

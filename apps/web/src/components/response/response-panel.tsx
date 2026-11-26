@@ -74,6 +74,7 @@ export function ResponsePanelError({
         alertConfig.containerClass,
         className,
       )}
+      role="alert"
     >
       <AlertTriangle className="size-8 stroke-1 text-destructive" />
       <div className="flex flex-col gap-1 text-center">
@@ -107,7 +108,7 @@ export function ResponsePanel({
   }
 
   return (
-    <Tabs defaultValue="headers" className={className}>
+    <Tabs defaultValue="body" className={className}>
       <TabsList
         className="w-full justify-start rounded-none border-b border-border bg-transparent p-1"
         variant="line"
@@ -126,7 +127,9 @@ export function ResponsePanel({
         </TabsTrigger>
       </TabsList>
       <TabsContent value="body" className="mt-4 space-y-2 px-2">
-        {response ? (
+        {error ? (
+          <ResponsePanelError error={error} />
+        ) : response ? (
           <ResponseContent response={response} />
         ) : (
           <ResponsePanelEmpty>
@@ -136,9 +139,7 @@ export function ResponsePanel({
         )}
       </TabsContent>
       <TabsContent value="headers" className="mt-4 space-y-2 px-2">
-        {error ? (
-          <ResponsePanelError error={error} />
-        ) : response ? (
+        {response ? (
           <ResponseContent response={response} />
         ) : (
           <ResponsePanelEmpty>

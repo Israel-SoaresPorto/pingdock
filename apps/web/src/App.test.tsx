@@ -3,6 +3,32 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import App from "./App";
+import type { HistoryItem } from "./types/app";
+
+function setupHistoryInLocalStorage() {
+ localStorage.setItem(
+      "pingdock_history",
+      JSON.stringify([
+        {
+          id: "req-1",
+          method: "POST",
+          url: "https://api.exemplo.com/v1/posts",
+          headers: [
+            {
+              id: "h-1",
+              key: "Content-Type",
+              value: "application/json",
+              enabled: true,
+            },
+          ],
+          body: '{"title":"Teste"}',
+          status: 201,
+          durationMs: 245,
+          timestamp: 1700000000000,
+        },
+      ]),
+    );
+}
 
 describe("Página principal", () => {
   it("envia requisição GET para /api/proxy e exibe a resposta formatada", async () => {
@@ -111,5 +137,55 @@ describe("Página principal", () => {
     expect(networkAlert).toHaveTextContent(
       "Não foi possível conectar ao servidor proxy.",
     );
+  });
+
+  it("seleciona um item do histórico e preenche os campos do formulário", async () => {
+    const user = userEvent.setup();
+
+    setupHistoryInLocalStorage();
+
+    const { getByLabelText, getByRole } = render(<App />);
+    const urlInput = getByLabelText("URL da requisição");
+
+    await user.click(
+      getByRole("button", {
+        name: /^POST201 api\.exemplo\.com\/v1\/posts/,
+      }),
+    );
+
+    expect(urlInput).toHaveValue("https://api.exemplo.com/v1/posts");
+    expect(getByRole("combobox", { name: "Método HTTP" })).toHaveTextContent(
+      "POST",
+    );
+  });
+
+  it("remove um item do histórico e atualiza a lista", async () => {
+    const user = userEvent.setup();
+
+    setupHistoryInLocalStorage();
+
+    const { getByRole, queryByRole } = render(<App />);
+
+    const removeButton = getByRole("button", {
+      name: /Remover requisição/,
+    });
+
+    await user.click(removeButton);
+
+    expect(queryByRole("button", { name: /^POST201 api\.exemplo\.com\/v1\/posts/ })).not.toBeInTheDocument();
+  });
+
+  it("limpa todo o histórico e atualiza a lista", async () => {
+    const user = userEvent.setup();
+
+    setupHistoryInLocalStorage();
+
+    const { getByRole, queryByRole } = render(<App />);
+
+    const clearButton = getByRole("button", { name: "Limpar tudo" });
+
+    await user.click(clearButton);
+
+    expect(queryByRole("button", { name: /^POST201 api\.exemplo\.com\/v1\/posts/ })).not.toBeInTheDocument();
   });
 });
