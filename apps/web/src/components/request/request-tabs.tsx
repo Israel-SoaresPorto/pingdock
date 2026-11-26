@@ -14,6 +14,7 @@ interface RequestTabsProps {
   body: string;
   onHeadersChange: (headers: HeaderItem[]) => void;
   onBodyChange: (body: string) => void;
+  className?: string;
 }
 
 export function RequestTabs({
@@ -22,6 +23,7 @@ export function RequestTabs({
   body,
   onHeadersChange,
   onBodyChange,
+  className,
 }: RequestTabsProps) {
   const isGetMethod = method === "GET";
   const activeHeadersCount = headers.filter(
@@ -71,27 +73,30 @@ export function RequestTabs({
   );
 
   return (
-    <Tabs defaultValue="headers" className="w-full">
-      <TabsList className="h-10 w-full justify-start rounded-none border-b border-border bg-transparent p-0">
+    <Tabs defaultValue="headers" className={className}>
+      <TabsList
+        className="w-full justify-start rounded-none border-b border-border bg-transparent p-1"
+        variant="line"
+      >
         <TabsTrigger
           value="headers"
-          className="py-2 px-4 shadow-none rounded-none border-b-2 text-sm font-normal text-muted-foreground data-active:border-b-primary data-active:font-medium data-active:text-foreground data-active:shadow-none grow-0"
+          className="py-2 px-4 grow-0 data-active:after:bg-primary"
         >
           Headers
-          <span className="ml-2 font-mono text-[12px] text-muted-foreground">
+          <span className="ml-2 font-mono text-sm text-muted-foreground">
             {activeHeadersCount}
           </span>
         </TabsTrigger>
 
         <TabsTrigger
           value="body"
-          className="py-2 px-4 rounded-none border-b-2 grow-0 bg-transparent text-sm font-normal text-muted-foreground shadow-none data-active:border-b-primary data-active:font-medium data-active:text-foreground data-active:shadow-none"
+          className="py-2 px-4 rounded-none border-b-2 grow-0 bg-transparent text-sm font-normal text-muted-foreground shadow-none data-active:after:bg-primary"
         >
           Body
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="headers" className="mt-4 space-y-2">
+      <TabsContent value="headers" className="mt-4 space-y-2 px-2">
         {headers.map((header, index) => {
           return (
             <HeaderItemInput

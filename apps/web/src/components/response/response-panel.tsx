@@ -4,11 +4,13 @@ import { cn } from "@/lib/utils";
 import type { ProxyResponse } from "@/types/api";
 import type { ProxyRequestError } from "@/types/app";
 import { ResponseContent } from "./response-content";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 interface ResponsePanelProps {
   response: ProxyResponse | null;
   error: ProxyRequestError | null;
   isLoading: boolean;
+  className?: string;
 }
 
 function getErrorAlertConfig(error: ProxyRequestError) {
@@ -39,64 +41,77 @@ export function ResponsePanel({
   response,
   error,
   isLoading,
+  className,
 }: ResponsePanelProps) {
+  const alertConfig = error ? getErrorAlertConfig(error) : null;
+
   if (isLoading) {
     return (
-      <section
-        aria-label="Painel de resposta"
-        aria-busy="true"
-        className="flex items-center gap-2 rounded-md border border-border bg-surface p-4 text-sm text-muted-foreground"
+      <div
+        className={cn(
+          "flex h-full items-center justify-center gap-2 p-4 text-sm text-muted-foreground",
+          className,
+        )}
       >
-        <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
-        <span>Enviando requisição…</span>
-      </section>
+        <LoaderCircle className="size-4 animate-spin" />
+        Carregando resposta...
+      </div>
     );
   }
 
-  if (error) {
-    const alertConfig = getErrorAlertConfig(error);
-
-    return (
-      <section aria-label="Painel de resposta">
-        <div
-          role="alert"
-          className={cn(
-            "flex items-start gap-3 rounded-md border p-4 text-sm",
-            alertConfig.containerClass,
-          )}
+  return (
+    <Tabs defaultValue="headers" className={className}>
+      <TabsList
+        className="w-full justify-start rounded-none border-b border-border bg-transparent p-1"
+        variant="line"
+      >
+        <TabsTrigger
+          value="headers"
+          className="py-2 px-4 grow-0 data-active:after:bg-primary"
         >
-          <AlertTriangle
-            className={cn("mt-0.5 size-4 shrink-0", alertConfig.titleClass)}
-            aria-hidden="true"
-          />
-          <div className="space-y-1">
-            <p className={cn("font-semibold", alertConfig.titleClass)}>
-              {alertConfig.title}
-            </p>
-            <p className="text-foreground">{error.message}</p>
+          Resposta
+        </TabsTrigger>
+        <TabsTrigger
+          value="body"
+          className="py-2 px-4 grow-0 data-active:after:bg-primary"
+        >
+          Headers
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="body" className="mt-4 space-y-2 px-2">
+        {response ? (
+          <ResponseContent response={response} />
+        ) : (
+          <div className="flex items-center justify-center gap-2 rounded-md border border-border p-4 text-sm text-muted-foreground">
+            <Terminal className="size-4" />
+            Nenhuma resposta ainda. Envie uma requisição para ver os headers
+            aqui.
           </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (!response) {
-    return (
-      <section
-        aria-label="Painel de resposta"
-        className="flex flex-col items-center justify-center gap-2 rounded-md border border-dashed border-border p-8 text-center"
-      >
-        <Terminal className="size-5 text-muted-foreground" aria-hidden="true" />
-        <p className="text-sm font-medium text-foreground">
-          Nenhuma resposta ainda
-        </p>
-        <p className="text-2xs text-muted-foreground">
-          Informe uma URL acima e clique em Enviar para visualizar status,
-          headers e corpo da resposta.
-        </p>
-      </section>
-    );
-  }
-
-  return <ResponseContent response={response} />;
+        )}
+      </TabsContent>
+      <TabsContent value="headers" className="mt-4 space-y-2 px-2">
+        {error ? (
+          <div
+            className={cn(
+              "flex items-center gap-2 rounded-md border p-4 text-sm",
+              alertConfig?.containerClass,
+            )}
+          >
+            <AlertTriangle className="size-4" />
+            <span className={alertConfig?.titleClass}>
+              {alertConfig?.title}
+            </span>
+          </div>
+        ) : response ? (
+          <ResponseContent response={response} />
+        ) : (
+          <div className="flex items-center justify-center gap-2 rounded-md border border-border p-4 text-sm text-muted-foreground">
+            <Terminal className="size-4" />
+            Nenhuma resposta ainda. Envie uma requisição para ver a resposta
+            aqui.
+          </div>
+        )}
+      </TabsContent>
+    </Tabs>
+  );
 }

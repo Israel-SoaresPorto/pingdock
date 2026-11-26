@@ -60,7 +60,7 @@ export function HistorySidebar({
           </p>
         </div>
       ) : (
-        <ul className="space-y-1.5" aria-label="Requisições salvas">
+        <ul className="space-y-1.5 flex-1 overflow-y-auto" aria-label="Requisições salvas">
           {items.map((item) => {
             const isSelected = item.id === selectedId;
             const displayUrl = formatHostAndPath(item.url);

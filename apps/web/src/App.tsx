@@ -60,7 +60,7 @@ export function App() {
       setSelectedHistoryId(null);
     }
   }
-  
+
   function handleClearHistory() {
     clearHistory();
     setSelectedHistoryId(null);
@@ -68,17 +68,17 @@ export function App() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <header className="flex h-14 items-center justify-between border-b border-border px-6">
+      <header className="sticky top-0 bg-background flex h-14 items-center justify-between border-b border-border px-6">
         <div className="flex items-center gap-2">
           <span
             className="inline-block h-2 w-2 rounded-full bg-primary"
             aria-hidden="true"
           />
-          <span className="text-[15px] font-semibold tracking-[-0.01em]">
+          <span className="text-base font-semibold tracking-[-0.01em]">
             PingDock
           </span>
         </div>
-        <span className="hidden text-[13px] text-muted-foreground sm:inline">
+        <span className="hidden text-sm text-muted-foreground sm:inline">
           Cliente HTTP/REST
         </span>
 
@@ -103,7 +103,7 @@ export function App() {
           id="history-sidebar"
           aria-label="Histórico de requisições"
           className={cn(
-            "w-full border-b border-border bg-surface p-4 lg:block lg:w-75 lg:border-r lg:border-b-0",
+            "w-full border-b border-border bg-surface p-4 lg:block lg:w-75 lg:border-r lg:border-b-0 lg:fixed lg:top-14 lg:h-[calc(100vh-3.5rem)] lg:overflow-y-auto",
             isMobileHistoryOpen ? "block" : "hidden",
           )}
         >
@@ -116,7 +116,7 @@ export function App() {
           />
         </aside>
 
-        <main className="min-w-0 flex-[999_1_560px] space-y-6 p-6">
+        <main className="w-full lg:ml-76 space-y-6">
           <RequestBar
             method={method}
             url={url}
@@ -126,19 +126,25 @@ export function App() {
             onSubmit={handleSubmit}
           />
 
-          <RequestTabs
-            method={method}
-            headers={headers}
-            body={body}
-            onHeadersChange={setHeaders}
-            onBodyChange={setBody}
-          />
+          <div className="h-full grid grid-cols-[1fr_1px_1fr] border-t border-border">
+            <RequestTabs
+              method={method}
+              headers={headers}
+              body={body}
+              onHeadersChange={setHeaders}
+              onBodyChange={setBody}
+              className="w-full"
+            />
 
-          <ResponsePanel
-            response={response}
-            error={error}
-            isLoading={isLoading}
-          />
+            <span className="bg-border" aria-hidden="true" />
+
+            <ResponsePanel
+              response={response}
+              error={error}
+              isLoading={isLoading}
+              className="w-full"
+            />
+          </div>
         </main>
       </div>
     </div>
